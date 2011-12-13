@@ -68,12 +68,13 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
 
                 if (endX >= _collisionMap.GetLength(0) || // Is EndX outside the bounds of the collision map?
                     endY >= _collisionMap.GetLength(1) || // Is EndY outside the bounds of the collision map?
-                    startX > _collisionMap.GetUpperBound(0) || // Is StartX outside the bounds of the collision map?
-                    startY > _collisionMap.GetUpperBound(1) || // Is StartY outside the bounds of the collision map?
+                    startX >= _collisionMap.GetLength(0) || // Is StartX outside the bounds of the collision map?
+                    startY >= _collisionMap.GetLength(1) || // Is StartY outside the bounds of the collision map?
                     _collisionMap[endX, endY] == 0 || // Is the target blocked by the collision map?
                     (startX == endX && startY == endY)) // Is the start also the target?
-                    return new List<byte[]>();
-                // If any of these are yes, no path can be made. Don't run the path finder.
+                    
+                    // If any of these are yes, no path can be made. Don't run the path finder.
+                    return new byte[0][];
 
                 #region Init
 
@@ -103,6 +104,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
 
                     Move(values);
 
+                    // Add the surrounding tiles.
                     Add(-1, 0, endX, endY, values);
                     Add(0, -1, endX, endY, values);
                     Add(1, 0, endX, endY, values);
@@ -115,6 +117,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
                 }
             }
 
+            // If no new tiles can be checked then the path must be impossible.
             if (values.Count == 0)
                 return new List<byte[]>();
 
@@ -152,7 +155,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             var y2 = (byte) (values.Y[values.Location] + y);
             var parent = values.Location;
 
-            if (x2 > _collisionMap.GetUpperBound(0) || y2 > _collisionMap.GetUpperBound(1))
+            if (x2 >= _collisionMap.GetLength(0) || y2 >= _collisionMap.GetLength(1))
                 return;
 
             if (values.Tiles[x2, y2] == 2)
@@ -214,7 +217,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             {
                 if (values.F[values.BinaryHeap[c]] > values.F[values.BinaryHeap[c/2]])
                     break;
-                var temp = values.BinaryHeap[c/2];
+                var temp = values.BinaryHeap[c / 2];
                 values.BinaryHeap[c/2] = values.BinaryHeap[c];
                 values.BinaryHeap[c] = temp;
             }
