@@ -8,8 +8,8 @@
     <ProjectGuid>{44E90326-3AB3-49C7-A34C-765086C736E0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IHI.Server.Plugins.Cecer1.IHIPathfinder</RootNamespace>
-    <AssemblyName>IHIPathfinder</AssemblyName>
+    <RootNamespace>IHI.Server.Libraries.Cecer1.IHIPathfinder</RootNamespace>
+    <AssemblyName>LIB-IHIPathfinder</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,7 +33,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\_OUTPUT\plugins\</OutputPath>
+    <OutputPath>..\..\_OUTPUT\libs\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -93,7 +93,6 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IHIPathfinder.cs" />
     <Compile Include="Logic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Values.cs" />

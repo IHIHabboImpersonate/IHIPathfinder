@@ -1,31 +1,46 @@
-﻿using System;
+﻿// 
+// Copyright (C) 2012  Chris Chenery
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Collections.Generic;
 using IHI.Server.Rooms.RoomUnits;
 
 namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
 {
     /// <summary>
-    /// The logic of the pathfinder. This calculates all the paths.
+    ///   The logic of the pathfinder. This calculates all the paths.
     /// </summary>
     internal class Logic : IPathfinder
     {
         /// <summary>
-        /// Stores the state of the tiles.
+        ///   Stores the state of the tiles.
         /// </summary>
         private byte[,] _collisionMap;
 
         /// <summary>
-        /// Stores the height of the tiles.
+        ///   Stores the height of the tiles.
         /// </summary>
         private float[,] _height;
 
         #region IPathfinder Members
 
         /// <summary>
-        /// Set the tile map.
+        ///   Set the tile map.
         /// </summary>
-        /// <param name="map">The state of the tiles.</param>
-        /// <param name="height">The height of the tiles.</param>
+        /// <param name = "map">The state of the tiles.</param>
+        /// <param name = "height">The height of the tiles.</param>
         public void ApplyCollisionMap(byte[,] map, float[,] height)
         {
             // Is this replacing an existing tile map
@@ -50,14 +65,14 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
         }
 
         /// <summary>
-        /// Get the next step on a path.
+        ///   Get the next step on a path.
         /// </summary>
-        /// <param name="startX">PointA X</param>
-        /// <param name="startY">PointA Y</param>
-        /// <param name="endX">PointB X</param>
-        /// <param name="endY">PointB Y</param>
-        /// <param name="maxDrop">The Maximum height to drop in a single step.</param>
-        /// <param name="maxJump">The Maximum height to rise in a single step.</param>
+        /// <param name = "startX">PointA X</param>
+        /// <param name = "startY">PointA Y</param>
+        /// <param name = "endX">PointB X</param>
+        /// <param name = "endY">PointB Y</param>
+        /// <param name = "maxDrop">The Maximum height to drop in a single step.</param>
+        /// <param name = "maxJump">The Maximum height to rise in a single step.</param>
         /// <returns></returns>
         public ICollection<byte[]> Path(byte startX, byte startY, byte endX, byte endY, float maxDrop, float maxJump)
         {
@@ -121,7 +136,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             if (values.Count == 0)
                 return new List<byte[]>();
 
-            var path = new List<byte[]>();
+            List<byte[]> path = new List<byte[]>();
 
             while (values.X[values.Parent[values.Location]] != startX ||
                    values.Y[values.Parent[values.Location]] != startY)
@@ -138,7 +153,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
         #endregion
 
         /// <summary>
-        /// Estimate the cost from X,Y to EndX,EndY.
+        ///   Estimate the cost from X,Y to EndX,EndY.
         /// </summary>
         /// <returns></returns>
         private static int GetH(int x, int y, int endX, int endY)
@@ -147,13 +162,12 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
         }
 
         /// <summary>
-        /// 
         /// </summary>
         private void Add(sbyte x, sbyte y, byte endX, byte endY, Values values)
         {
-            var x2 = (byte) (values.X[values.Location] + x);
-            var y2 = (byte) (values.Y[values.Location] + y);
-            var parent = values.Location;
+            byte x2 = (byte) (values.X[values.Location] + x);
+            byte y2 = (byte) (values.Y[values.Location] + y);
+            ushort parent = values.Location;
 
             if (x2 >= _collisionMap.GetLength(0) || y2 >= _collisionMap.GetLength(1))
                 return;
@@ -163,8 +177,8 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             if ((_collisionMap[x2, y2] == 0 || (_collisionMap[x2, y2] == 2 && (x2 != endX || y2 != endY))))
                 return;
 
-            var z = values.Z[x2, y2];
-            var z2 = values.Z[values.X[parent], values.Y[parent]];
+            float z = values.Z[x2, y2];
+            float z2 = values.Z[values.X[parent], values.Y[parent]];
             if (z > z2 + values.MaxJump || z < z2 - values.MaxDrop)
                 return;
 
@@ -213,11 +227,11 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
                 values.G[values.LastID] = (ushort) (14 + values.G[parent]);
             values.F[values.LastID] = (ushort) (values.G[values.LastID] + values.H[values.LastID]);
 
-            for (var c = values.Count; c != 1; c /= 2)
+            for (ushort c = values.Count; c != 1; c /= 2)
             {
                 if (values.F[values.BinaryHeap[c]] > values.F[values.BinaryHeap[c/2]])
                     break;
-                var temp = values.BinaryHeap[c / 2];
+                ushort temp = values.BinaryHeap[c/2];
                 values.BinaryHeap[c/2] = values.BinaryHeap[c];
                 values.BinaryHeap[c] = temp;
             }
@@ -235,7 +249,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             ushort location = 1;
             while (true)
             {
-                var high = location;
+                ushort high = location;
                 if (2*high + 1 <= values.Count)
                 {
                     if (values.F[values.BinaryHeap[high]] >= values.F[values.BinaryHeap[2*high]])
@@ -251,7 +265,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
 
                 if (high == location)
                     break;
-                var temp = values.BinaryHeap[high];
+                ushort temp = values.BinaryHeap[high];
                 values.BinaryHeap[high] = values.BinaryHeap[location];
                 values.BinaryHeap[location] = temp;
             }
