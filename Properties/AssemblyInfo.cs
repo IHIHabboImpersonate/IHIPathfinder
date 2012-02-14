@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IHIPathfinder")]
-[assembly: AssemblyCopyright("Copyright © Chris Cheney 2012")]
+[assembly: AssemblyCopyright("Copyright © Chris Chenery 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
