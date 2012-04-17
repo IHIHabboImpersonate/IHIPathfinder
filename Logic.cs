@@ -102,13 +102,6 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
                     return new byte[0][];
 
                 #region Init
-
-                /*
-                 * G = Cost so far
-                 * H = Estimated remaining cost
-                 * F = G + H
-                 */
-
                 values.Count++;
                 values.BinaryHeap[values.Count] = values.LastID;
                 values.X[values.LastID] = startX;
@@ -129,7 +122,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
 
                     Move(values);
 
-                    // Add the surrounding tiles.
+                    #region Add the surrounding tiles.
                     Add(-1, 0, endX, endY, values);
                     Add(0, -1, endX, endY, values);
                     Add(1, 0, endX, endY, values);
@@ -139,12 +132,13 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
                     Add(-1, 1, endX, endY, values);
                     Add(1, -1, endX, endY, values);
                     Add(1, 1, endX, endY, values);
+                    #endregion
                 }
             }
 
             // If no new tiles can be checked then the path must be impossible.
             if (values.Count == 0)
-                return new List<byte[]>();
+                return new byte[0][];
 
             List<byte[]> path = new List<byte[]>();
 
@@ -179,28 +173,44 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             byte y2 = (byte) (values.Y[values.Location] + y);
             ushort parent = values.Location;
 
+            #region PATHFINDER RULE: Disallow (non-)tiles beyond the map
             if (x2 >= _collisionMap.GetLength(0) || y2 >= _collisionMap.GetLength(1))
                 return;
+            #endregion
 
+            #region PATHFINDER RULE: Disallow ?
             if (values.Tiles[x2, y2] == 2)
                 return;
-            if ((_collisionMap[x2, y2] == 0 || (_collisionMap[x2, y2] == 2 && (x2 != endX || y2 != endY))))
+            #endregion
+            #region PATHFINDER RULE: Disallow closed tiles
+            if (_collisionMap[x2, y2] == 0)
                 return;
+            #endregion
+            #region PATHFINDER RULE: Disallow interactive tiles EXCEPT for destination tile.
+            if (_collisionMap[x2, y2] == 2 && (x2 != endX || y2 != endY))
+                return;
+            #endregion
 
             float z = values.Z[x2, y2];
             float z2 = values.Z[values.X[parent], values.Y[parent]];
+
+            #region PATHFINDER RULE: Disallow height changes beyond the limit
             if (z > z2 + values.MaxJump || z < z2 - values.MaxDrop)
                 return;
+            #endregion
 
             if (parent > 0)
             {
-                if (values.X[parent] != x2 && values.Y[parent] != y2)
-                {
-                    if (_collisionMap[x2, values.Y[parent]] == 0 || _collisionMap[x2, values.Y[parent]] == 2)
-                        return;
-                    if (_collisionMap[values.X[parent], y2] == 0 || _collisionMap[values.X[parent], y2] == 2)
-                        return;
-                }
+                #region PATHFINDER RULE: Disallow parernt tile (backtracking)
+                if (values.X[parent] == x2 && values.Y[parent] == y2)
+                    return;
+                #endregion
+                #region PATHFINDER RULE: Disallow diagonals when walking though solid/interactive corners
+                if (_collisionMap[x2, values.Y[parent]] == 0 || _collisionMap[x2, values.Y[parent]] == 2)
+                    return;
+                if (_collisionMap[values.X[parent], y2] == 0 || _collisionMap[values.X[parent], y2] == 2)
+                    return;
+                #endregion
             }
 
 

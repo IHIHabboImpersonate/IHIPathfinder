@@ -24,16 +24,43 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
     internal class Values
     {
         internal readonly ushort[] BinaryHeap;
+        /// <summary>
+        /// (Estimated) total cost.
+        /// </summary>
         internal readonly ushort[] F;
+        /// <summary>
+        /// Cost so far.
+        /// </summary>
         internal readonly ushort[] G;
+        /// <summary>
+        /// Estimated remaining cost.
+        /// </summary>
         internal readonly ushort[] H;
-
+        
+        /// <summary>
+        /// The maximum allowed drop distance.
+        /// </summary>
         internal readonly float MaxDrop;
+        /// <summary>
+        /// The maximum allowed jump distance.
+        /// </summary>
         internal readonly float MaxJump;
+        /// <summary>
+        /// The index of the parent tile.
+        /// </summary>
         internal readonly ushort[] Parent;
         internal readonly byte[,] Tiles;
+        /// <summary>
+        /// The tiles X coords.
+        /// </summary>
         internal readonly byte[] X;
+        /// <summary>
+        /// The tiles Y coords.
+        /// </summary>
         internal readonly byte[] Y;
+        /// <summary>
+        /// The tiles Z coords.
+        /// </summary>
         internal readonly float[,] Z;
         internal ushort Count;
         internal ushort LastID;
