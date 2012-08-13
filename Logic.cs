@@ -174,11 +174,11 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             ushort parent = values.Location;
 
             #region PATHFINDER RULE: Disallow (non-)tiles beyond the map
-            if (x2 >= _collisionMap.GetLength(0) || y2 >= _collisionMap.GetLength(1))
+            if (x2 >= _collisionMap.GetLengt/h(0) || y2 >= _collisionMap.GetLength(1))
                 return;
             #endregion
 
-            #region PATHFINDER RULE: Disallow ?
+            #region PATHFINDER RULE: Disallow tiles that make up the current path.
             if (values.Tiles[x2, y2] == 2)
                 return;
             #endregion
@@ -186,7 +186,7 @@ namespace IHI.Server.Plugins.Cecer1.IHIPathfinder
             if (_collisionMap[x2, y2] == 0)
                 return;
             #endregion
-            #region PATHFINDER RULE: Disallow interactive tiles EXCEPT for destination tile.
+            #region PATHFINDER RULE: Disallow interactive tiles EXCEPT for the destination tile.
             if (_collisionMap[x2, y2] == 2 && (x2 != endX || y2 != endY))
                 return;
             #endregion
